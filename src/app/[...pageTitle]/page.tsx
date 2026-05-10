@@ -157,7 +157,7 @@ export async function generateMetadata({ params }: { params: Promise<{ pageTitle
   const currentPage = pages.find(p => p.path === pathString);
 
   if (!currentPage) {
-    return { title: 'Hello Page' };
+    return { title: 'Hello Home Page' };
   }
 
   return {
