@@ -49,6 +49,7 @@ import { defaultDataSection40 } from '../section-40/data';
 import { defaultDataSection41 } from '../section-41/data';
 import { defaultDataSection42 } from '../section-42/data';
 import { defaultDataSection43 } from '../section-43/data';
+import { defaultDataSection44 } from '../section-44/data';
 
 import MutationSection1 from '../section-1/Mutation';
 import MutationSection2 from '../section-2/Mutation';
@@ -93,6 +94,7 @@ import MutationSection40 from '../section-40/Mutation';
 import MutationSection41 from '../section-41/Mutation';
 import MutationSection42 from '../section-42/Mutation';
 import MutationSection43 from '../section-43/Mutation';
+import MutationSection44 from '../section-44/Mutation';
 
 import QuerySection1 from '../section-1/Query';
 import QuerySection2 from '../section-2/Query';
@@ -137,6 +139,7 @@ import QuerySection40 from '../section-40/Query';
 import QuerySection41 from '../section-41/Query';
 import QuerySection42 from '../section-42/Query';
 import QuerySection43 from '../section-43/Query';
+import QuerySection44 from '../section-44/Query';
 
 export const allSectionCagegory = ['section', 'accordion', 'scroll', 'blog', 'map', 'tag', 'gallery', 'carousel', 'icons'];
 
@@ -184,6 +187,7 @@ export const AllSections = {
   'section-uid-41': { name: 'Name', category: allSectionCagegory[0], mutation: MutationSection41, query: QuerySection41, data: defaultDataSection41 },
   'section-uid-42': { name: 'Name', category: allSectionCagegory[0], mutation: MutationSection42, query: QuerySection42, data: defaultDataSection42 },
   'section-uid-43': { name: 'Name', category: allSectionCagegory[0], mutation: MutationSection43, query: QuerySection43, data: defaultDataSection43 },
+  'section-uid-44': { name: 'Name', category: allSectionCagegory[0], mutation: MutationSection44, query: QuerySection44, data: defaultDataSection44 },
 };
 
 export const AllSectionsKeys = Object.keys(AllSections);
