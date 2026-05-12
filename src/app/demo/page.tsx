@@ -1,298 +1,436 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search,
-  Menu,
-  X,
-  Phone,
-  ChevronLeft,
-  ChevronRight,
   Star,
-  CheckCircle2,
-  Truck,
-  ShieldCheck,
-  Clock,
-  ShoppingBag,
+  Check,
+  Eye,
   Share2,
-  Maximize2,
-  ExternalLink,
+  Package,
+  Battery,
+  Settings,
+  Disc,
+  Droplets,
   Zap,
+  Wrench,
+  Hammer,
   MapPin,
-  Mail,
+  Home,
+  Truck,
+  Scale,
+  Clock,
+  ShieldCheck,
+  ExternalLink,
+  X,
+  Copy,
+  Facebook,
+  Twitter,
+  MessageCircle,
+  Linkedin,
 } from 'lucide-react';
-
-const IMAGE_URL = 'https://i.ibb.co/bL4F59C/3.png';
+import Image from 'next/image';
 
 interface Product {
   id: string;
-  category: string;
-  name: string;
-  description: string;
-  rating: number;
-  originalPrice: number;
-  offerPrice: number;
-  availability: 'in_stock' | 'out_of_stock' | 'limited';
   brand: string;
-  weight: string;
-  warranty: string;
+  name: string;
+  rating: number;
+  ratingCount: number;
   features: string[];
-  specs: Record<string, string>;
+  offerPrice: number;
+  originalPrice: number;
+  warranty: string;
+  weight: string;
+  inStock: boolean;
+  category: string;
 }
 
 const CATEGORIES = [
-  { id: 'battery', label: 'ব্যাটারি', icon: '🔋', color: 'bg-green-100 text-green-700' },
-  { id: 'vehicle', label: 'ইলেকট্রিক রিকশা', icon: '🛺', color: 'bg-emerald-100 text-emerald-700' },
-  { id: 'engine_parts', label: 'ইঞ্জিন পার্টস', icon: '⚙️', color: 'bg-teal-100 text-teal-700' },
-  { id: 'tires', label: 'টায়ার', icon: '🛞', color: 'bg-lime-100 text-lime-700' },
-  { id: 'accessories', label: 'আনুষাঙ্গিক', icon: '🔧', color: 'bg-green-50 text-green-600' },
+  { id: 'home', label: 'হোম', icon: <Home size={18} /> },
+  { id: 'battery', label: 'ব্যাটারি', icon: <Battery size={18} /> },
+  { id: 'rickshaw', label: 'ইলেকট্রিক রিকশা', icon: <Truck size={18} /> },
+  { id: 'engine', label: 'ইঞ্জিন পার্টস', icon: <Settings size={18} /> },
+  { id: 'tire', label: 'টায়ার ও চাকা', icon: <Disc size={18} /> },
+  { id: 'lubricant', label: 'লুব্রিকেন্ট', icon: <Droplets size={18} /> },
+  { id: 'electrical', label: 'ইলেকট্রিক্যাল', icon: <Zap size={18} /> },
+  { id: 'accessories', label: 'আনুষাঙ্গিক', icon: <Wrench size={18} /> },
+  { id: 'tools', label: 'সরঞ্জাম', icon: <Hammer size={18} /> },
+  { id: 'contact', label: 'যোগাযোগ', icon: <MapPin size={18} /> },
 ];
 
 const PRODUCTS: Product[] = [
   {
-    id: 'BAT-001',
-    category: 'battery',
-    name: 'LiFePO4 12V 100Ah ব্যাটারি (ব্ল্যাক সিরিজ)',
-    description: 'উচ্চ মানের LiFePO4 (লিথিয়াম আয়রন ফসফেট) ব্যাটারি। দীর্ঘস্থায়ী সাইকেল লাইফ এবং অতি নিরাপদ কেমিস্ট্রি।',
-    rating: 4.8,
-    originalPrice: 28000,
-    offerPrice: 24500,
-    availability: 'in_stock',
+    id: 'lifepo4-pro',
     brand: 'LiFePO4 Pro',
-    weight: '১০.৫ কেজি',
+    name: 'LiFePO4 12V 100Ah ব্যাটারি (ব্ল্যাক সিরিজ)',
+    rating: 4.8,
+    ratingCount: 12,
+    features: ['LiFePO4 কেমিস্ট্রি', '৩০০০+ সাইকেল লাইফ', 'BMS সুরক্ষা সহ'],
+    offerPrice: 24500,
+    originalPrice: 28000,
     warranty: '৩ বছর',
-    features: ['LiFePO4 কেমিস্ট্রি', '৩০০০+ সাইকেল লাইফ', 'BMS সুরক্ষা', 'দ্রুত চার্জিং'],
-    specs: { ভোল্টেজ: '১২.৮V', 'চার্জিং টাইম': '৪-৬ ঘন্টা', মাত্রা: '৩২৮×১৭২×২১৫ মিমি' },
+    weight: '১০.৫ কেজি',
+    inStock: true,
+    category: 'battery',
   },
   {
-    id: 'VEH-001',
-    category: 'vehicle',
-    name: 'লাল ইলেকট্রিক রিকশা — স্ট্যান্ডার্ড মডেল',
-    description: 'শক্তিশালী মোটর ও দীর্ঘমেয়াদী ব্যাটারি সহ দৈনন্দিন যাতায়াতের জন্য সেরা পছন্দ।',
-    rating: 4.7,
-    originalPrice: 185000,
-    offerPrice: 170000,
-    availability: 'in_stock',
-    brand: 'EcoRide',
-    weight: '৩৫০ কেজি',
-    warranty: '১ বছর',
-    features: ['শক্তিশালী DC মোটর', 'আরামদায়ক আসন', 'LED লাইটিং', 'কম রক্ষণাবেক্ষণ'],
-    specs: { মোটর: '৮০০W DC', রেঞ্জ: '৭০-৮০ কিমি', 'যাত্রী ধারণ': '৩ জন' },
-  },
-  {
-    id: 'ENG-001',
-    category: 'engine_parts',
-    name: 'পিস্টন রিং সেট (Universal)',
-    description: 'উচ্চ মানের ক্রোম-মলিবডেনাম স্টিল দিয়ে তৈরি পিস্টন রিং সেট। ইঞ্জিনের কম্প্রেশন বাড়ায়।',
-    rating: 4.5,
-    originalPrice: 3500,
-    offerPrice: 2800,
-    availability: 'limited',
-    brand: 'PowerPart',
-    weight: '৫০০ গ্রাম',
-    warranty: '৬ মাস',
-    features: ['ক্রোম-মলি স্টিল', 'তাপ প্রতিরোধী', 'উচ্চ স্থায়িত্ব'],
-    specs: { মডেল: 'UNI-2024', ম্যাটেরিয়াল: 'স্টিল' },
-  },
-  {
-    id: 'TIR-001',
-    category: 'tires',
-    name: 'অটোমোটিভ গ্রিপ টায়ার',
-    description: 'উন্নত রাবার ম্যাটেরিয়াল দিয়ে তৈরি যা সব ধরনের রাস্তায় চমৎকার গ্রিপ প্রদান করে।',
+    id: 'silver-pack',
+    brand: 'SilverPack',
+    name: 'লিথিয়াম প্যাক সিলভার সিরিজ (Top Label)',
     rating: 4.6,
-    originalPrice: 5500,
-    offerPrice: 4200,
-    availability: 'in_stock',
-    brand: 'SuperGrip',
-    weight: '৪ কেজি',
-    warranty: '১ বছর',
-    features: ['অ্যান্টি-স্কিড', 'দীর্ঘস্থায়ী', 'ভারী লোড ক্ষমতা'],
-    specs: { সাইজ: '১২ ইঞ্চি', টাইপ: 'টিউবলেস' },
+    ratingCount: 8,
+    features: ['হাই ডিসচার্জ রেট', 'সিলভার অ্যালয় টার্মিনাল', 'কমপ্যাক্ট ডিজাইন'],
+    offerPrice: 19000,
+    originalPrice: 22000,
+    warranty: '২ বছর',
+    weight: '১২ কেজি',
+    inStock: true,
+    category: 'battery',
+  },
+  {
+    id: 'power-handle',
+    brand: 'PowerHandle',
+    name: 'লিথিয়াম প্যাক — হ্যান্ডেল ও টার্মিনাল সিরিজ',
+    rating: 4.5,
+    ratingCount: 15,
+    features: ['বহনযোগ্য হ্যান্ডেল', 'মজবুত টার্মিনাল', 'ওয়াটারপ্রুফ কেসিং'],
+    offerPrice: 17500,
+    originalPrice: 20000,
+    warranty: '২ বছর',
+    weight: '১১ কেজি',
+    inStock: true,
+    category: 'battery',
+  },
+  {
+    id: 'blue-power',
+    brand: 'BluePower',
+    name: 'লিথিয়াম প্যাক ব্লু ফ্রন্ট লেবেল',
+    rating: 4.4,
+    ratingCount: 20,
+    features: ['হাই-টেম্পারেচার সহনশীল', 'দ্রুত চার্জিং', 'লং সাইকেল লাইফ'],
+    offerPrice: 17000,
+    originalPrice: 19500,
+    warranty: '২ বছর',
+    weight: '১০.৮ কেজি',
+    inStock: true,
+    category: 'battery',
   },
 ];
 
-export default function FarzanaEnterprise() {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const IMAGE_URL = 'https://i.ibb.co/bL4F59C/3.png';
 
-  const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter(p => {
-      const matchesCat = selectedCategory === 'all' || p.category === selectedCategory;
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCat && matchesSearch;
-    });
-  }, [selectedCategory, searchQuery]);
+const formatPrice = (price: number) => {
+  return '৳' + price.toLocaleString('bn-BD');
+};
+
+export default function ProductShowcase() {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [shareProduct, setShareProduct] = useState<Product | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => setActiveSlide(prev => (prev + 1) % 3), 5000);
-    return () => clearInterval(timer);
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        const product = PRODUCTS.find(p => p.id === hash);
+        if (product) setSelectedProduct(product);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const formatPrice = (price: number) => '৳' + price.toLocaleString('bn-BD');
+  const copyToClipboard = (id: string) => {
+    const url = `${window.location.origin}${window.location.pathname}#${id}`;
+    navigator.clipboard.writeText(url);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const getShareLinks = (id: string, name: string) => {
+    const url = encodeURIComponent(`${window.location.origin}${window.location.pathname}#${id}`);
+    const text = encodeURIComponent(`Check out this ${name}`);
+    return {
+      whatsapp: `https://wa.me/?text=${text}%20${url}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+    };
+  };
 
   return (
-    <div className="min-h-screen pt-12 bg-slate-50 font-sans text-slate-900 overflow-x-hidden">
-      <main className="container mx-auto px-4 py-20">
-        <div className="mb-16">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
-            <div>
-              <h3 className="text-3xl font-extrabold text-slate-900 mb-2">পণ্য বিভাগসমূহ</h3>
-              <p className="text-slate-500">আপনার প্রয়োজনীয় ক্যাটাগরি বেছে নিন</p>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto scrollbar-hide">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all ${selectedCategory === 'all' ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-              >
-                সব পণ্য
-              </button>
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2 ${selectedCategory === cat.id ? 'bg-green-600 text-white shadow-lg' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-                >
-                  <span>{cat.icon}</span> {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.map(product => (
-                <motion.div
-                  layout
-                  key={product.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 group flex flex-col"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                    <Image src={IMAGE_URL} alt={product.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-                      {product.offerPrice < product.originalPrice && (
-                        <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg uppercase shadow-lg">
-                          -{Math.round(((product.originalPrice - product.offerPrice) / product.originalPrice) * 100)}% ছাড়
-                        </span>
-                      )}
-                      <span className="bg-white/90 backdrop-blur-sm text-slate-700 text-[10px] font-bold px-2 py-1 rounded-lg uppercase shadow-sm">
-                        #{product.id}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md uppercase tracking-wider">{product.brand}</span>
-                      <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
-                        <Star size={14} fill="currentColor" /> {product.rating}
-                      </div>
-                    </div>
-                    <h4 className="font-bold text-slate-800 text-lg mb-3 line-clamp-2 leading-snug group-hover:text-green-700 transition-colors">
-                      {product.name}
-                    </h4>
-                    <ul className="space-y-1.5 mb-6 flex-1">
-                      {product.features.slice(0, 3).map((f, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-xs text-slate-500">
-                          <CheckCircle2 size={12} className="text-green-500" /> {f}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="flex items-end justify-between mb-6">
-                      <div>
-                        <p className="text-2xl font-black text-green-700">{formatPrice(product.offerPrice)}</p>
-                        {product.originalPrice > product.offerPrice && (
-                          <p className="text-sm text-slate-400 line-through font-medium">{formatPrice(product.originalPrice)}</p>
-                        )}
-                      </div>
-                      <div
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
-                          product.availability === 'in_stock' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                        }`}
-                      >
-                        {product.availability === 'in_stock' ? 'স্টকে আছে' : 'সীমিত স্টক'}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setSelectedProduct(product)}
-                      className="w-full py-3.5 bg-slate-900 hover:bg-green-600 text-white rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2"
-                    >
-                      <Maximize2 size={16} /> বিস্তারিত দেখুন
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {filteredProducts.length === 0 && (
-            <div className="py-20 text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-4">
-                <Search size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800">কোনো পণ্য পাওয়া যায়নি</h3>
-              <p className="text-slate-500 mt-2">অনুগ্রহ করে অন্য কি-ওয়ার্ড দিয়ে সার্চ করুন</p>
-            </div>
-          )}
+    <div className="min-h-screen bg-[#F8FAF9] font-sans selection:bg-green-100">
+      <nav className="bg-[#1B7E43] text-white py-3 sticky top-20 left-0 right-0 z-40 shadow-md">
+        <div className="container mx-auto px-4 flex items-center gap-6 overflow-x-auto no-scrollbar">
+          {CATEGORIES.map(cat => (
+            <button key={cat.id} className="flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:text-green-200 transition-colors">
+              {cat.icon}
+              {cat.label}
+            </button>
+          ))}
         </div>
+      </nav>
 
-        <section className="bg-green-700 rounded-[3rem] p-8 md:p-16 overflow-hidden relative mb-20 shadow-2xl shadow-green-900/30">
-          <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
-            <div className="h-full w-full bg-white rotate-12 -translate-y-1/2 translate-x-1/2 rounded-full" />
-          </div>
+      <main className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <AnimatePresence mode="wait">
+            {PRODUCTS.map(product => (
+              <motion.div
+                layout
+                key={product.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="bg-white rounded-sm border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden"
+              >
+                <div className="relative aspect-square p-4 bg-white">
+                  <div className="relative w-full h-full border border-slate-100 rounded-sm overflow-hidden group-hover:border-green-500 transition-colors duration-300">
+                    <Image src={IMAGE_URL} alt={product.name} fill className="object-contain p-4 group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                </div>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">সেরা মূল্যে ইলেকট্রিক রিকশা ও ব্যাটারি কিনুন</h2>
-              <p className="text-lg text-green-100 mb-10 max-w-lg opacity-90 leading-relaxed">
-                আমরা সরাসরি আমদানিকারক হিসেবে পাইকারি ও খুচরা মূল্যে উন্নত প্রযুক্তির ব্যাটারি ও ইলেকট্রিক যানবাহন বিক্রি করছি।
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="#"
-                  className="px-8 py-4 bg-white text-green-800 rounded-full font-black text-lg transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
-                >
-                  অর্ডার করতে ক্লিক করুন
-                </a>
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-12 w-12 rounded-full border-4 border-green-700 overflow-hidden bg-slate-200">
-                      <Image src={IMAGE_URL} alt="User" width={48} height={48} />
+                <div className="p-5 flex-1 flex flex-col">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2 py-0.5 rounded-sm border border-green-100">
+                      {product.brand}
+                    </span>
+                    <span className="text-[10px] font-bold text-green-700 flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                      স্টকে আছে
+                    </span>
+                  </div>
+
+                  <h3 className="text-slate-800 font-bold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
+
+                  <div className="flex items-center gap-1 mb-4">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={12} className={i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'} />
+                      ))}
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 ml-1">({product.ratingCount})</span>
+                  </div>
+
+                  <div className="mt-auto">
+                    <div className="flex items-baseline gap-2 mb-4">
+                      <span className="text-xl font-black text-green-700">{formatPrice(product.offerPrice)}</span>
+                      <span className="text-xs text-slate-300 line-through">{formatPrice(product.originalPrice)}</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setSelectedProduct(product)}
+                        className="bg-[#1B7E43] hover:bg-[#156334] text-white py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
+                      >
+                        <Eye size={16} />
+                        বিস্তারিত
+                      </button>
+                      <button
+                        onClick={() => setShareProduct(product)}
+                        className="border border-slate-200 hover:border-green-600 hover:text-green-700 text-slate-600 py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
+                      >
+                        <Share2 size={16} />
+                        শেয়ার
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+      </main>
+
+      <AnimatePresence>
+        {selectedProduct && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProduct(null)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row"
+            >
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-4 right-4 z-10 p-2 bg-white/10 hover:bg-white/20 text-white md:text-slate-400 md:hover:text-slate-600 rounded-sm transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="w-full md:w-1/2 aspect-square relative bg-white p-8">
+                <div className="relative w-full h-full border border-slate-100 rounded-sm overflow-hidden">
+                  <Image src={IMAGE_URL} alt={selectedProduct.name} fill className="object-contain" />
+                </div>
+              </div>
+
+              <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col">
+                <span className="text-xs font-bold text-green-600 uppercase tracking-widest mb-2">{selectedProduct.brand}</span>
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 leading-tight">{selectedProduct.name}</h2>
+
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="text-3xl font-black text-green-700">{formatPrice(selectedProduct.offerPrice)}</div>
+                  <div className="text-lg text-slate-300 line-through">{formatPrice(selectedProduct.originalPrice)}</div>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  {selectedProduct.features.map((f, i) => (
+                    <div key={i} className="flex items-center gap-3 text-slate-600 font-medium">
+                      <div className="w-5 h-5 rounded-sm bg-green-100 flex items-center justify-center">
+                        <Check size={14} className="text-green-600" />
+                      </div>
+                      {f}
                     </div>
                   ))}
-                  <div className="h-12 px-3 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold text-white border-2 border-green-700/50">
-                    ১০কে+ গ্রাহক
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100 mt-auto">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase mb-1">গ্যারান্টি</span>
+                    <div className="flex items-center gap-2 font-bold text-slate-700">
+                      <Clock size={16} className="text-green-600" />
+                      {selectedProduct.warranty}
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase mb-1">ওজন</span>
+                    <div className="flex items-center gap-2 font-bold text-slate-700">
+                      <Scale size={16} className="text-amber-600" />
+                      {selectedProduct.weight}
+                    </div>
                   </div>
                 </div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {shareProduct && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShareProduct(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative w-full max-w-sm bg-white rounded-sm shadow-2xl p-6"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-slate-800">শেয়ার করুন</h3>
+                <button onClick={() => setShareProduct(null)} className="p-1 hover:bg-slate-100 rounded-sm">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-4 gap-4 mb-8">
+                {Object.entries(getShareLinks(shareProduct.id, shareProduct.name)).map(([platform, link]) => (
+                  <a key={platform} href={link} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 group">
+                    <div className="w-12 h-12 rounded-sm bg-slate-50 flex items-center justify-center text-slate-600 group-hover:bg-green-600 group-hover:text-white transition-all">
+                      {platform === 'whatsapp' && <MessageCircle size={24} />}
+                      {platform === 'facebook' && <Facebook size={24} />}
+                      {platform === 'twitter' && <Twitter size={24} />}
+                      {platform === 'linkedin' && <Linkedin size={24} />}
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">{platform}</span>
+                  </a>
+                ))}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase">লিঙ্ক কপি করুন</label>
+                <div className="relative">
+                  <input
+                    readOnly
+                    value={`${window.location.origin}${window.location.pathname}#${shareProduct.id}`}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-sm px-3 py-3 pr-12 text-xs font-medium text-slate-600 outline-none"
+                  />
+                  <button
+                    onClick={() => copyToClipboard(shareProduct.id)}
+                    className="absolute right-1 top-1 bottom-1 px-3 bg-green-600 text-white rounded-sm flex items-center justify-center transition-all hover:bg-green-700"
+                  >
+                    {isCopied ? <Check size={16} /> : <Copy size={16} />}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <footer className="mt-20 border-t border-slate-100 bg-white py-10">
+        <div className="container mx-auto px-4">
+          <section className="bg-green-700 rounded-sm p-8 md:p-16 overflow-hidden relative mb-20 shadow-xl">
+            <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+              <div className="h-full w-full bg-white rotate-12 -translate-y-1/2 translate-x-1/2 rounded-full" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: <Zap />, label: 'সুপার ফাস্ট চার্জিং', desc: 'কম সময়ে পূর্ণ চার্জ' },
-                { icon: <Clock />, label: 'দীর্ঘস্থায়ী গ্যারান্টি', desc: '৩-৫ বছর নিশ্চিন্ত সেবা' },
-                { icon: <ShieldCheck />, label: 'অরিজিনাল পার্টস', desc: '১০০% গ্যারান্টিযুক্ত' },
-                { icon: <ExternalLink />, label: 'হোম ডেলিভারি', desc: 'আপনার দরজায় পণ্য' },
-              ].map((f, i) => (
-                <div key={i} className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl hover:bg-white/20 transition-all">
-                  <div className="text-green-300 mb-4">{React.cloneElement(f.icon as React.ReactElement)}</div>
-                  <h5 className="text-white font-bold mb-1">{f.label}</h5>
-                  <p className="text-green-100/70 text-xs">{f.desc}</p>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="text-white">
+                <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">সেরা মূল্যে ইলেকট্রিক রিকশা ও ব্যাটারি কিনুন</h2>
+                <p className="text-lg text-green-100 mb-10 max-w-lg opacity-90 leading-relaxed">
+                  আমরা সরাসরি আমদানিকারক হিসেবে পাইকারি ও খুচরা মূল্যে উন্নত প্রযুক্তির ব্যাটারি ও ইলেকট্রিক যানবাহন বিক্রি করছি।
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button className="px-8 py-4 bg-white text-green-800 rounded-sm font-black text-lg transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2">
+                    অর্ডার করতে ক্লিক করুন
+                  </button>
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="h-12 w-12 rounded-sm border-2 border-green-700 overflow-hidden bg-slate-200 relative">
+                        <Image src={IMAGE_URL} alt="User" fill className="object-cover" />
+                      </div>
+                    ))}
+                    <div className="h-12 px-3 flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-sm text-xs font-bold text-white border border-white/30 ml-2">
+                      ১০কে+ গ্রাহক
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <Zap size={32} />, label: 'সুপার ফাস্ট চার্জিং', desc: 'কম সময়ে পূর্ণ চার্জ' },
+                  { icon: <Clock size={32} />, label: 'দীর্ঘস্থায়ী গ্যারান্টি', desc: '৩-৫ বছর নিশ্চিন্ত সেবা' },
+                  { icon: <ShieldCheck size={32} />, label: 'অরিজিনাল পার্টস', desc: '১০০% গ্যারান্টিযুক্ত' },
+                  { icon: <ExternalLink size={32} />, label: 'হোম ডেলিভারি', desc: 'আপনার দরজায় পণ্য' },
+                ].map((f, i) => (
+                  <div key={i} className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-sm hover:bg-white/20 transition-all">
+                    <div className="text-green-300 mb-4">{f.icon}</div>
+                    <h5 className="text-white font-bold mb-1">{f.label}</h5>
+                    <p className="text-green-100/70 text-xs">{f.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </div>
+      </footer>
+
+      <style jsx global>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }
