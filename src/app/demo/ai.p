@@ -1,8 +1,8 @@
-Look at the page.tsx 
+Look at the apge.tsx 
 ```
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Star,
@@ -17,8 +17,6 @@ import {
   Zap,
   Wrench,
   Hammer,
-  MapPin,
-  Home,
   Truck,
   Scale,
   Clock,
@@ -30,6 +28,7 @@ import {
   Twitter,
   MessageCircle,
   Linkedin,
+  Menu,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -49,7 +48,7 @@ interface Product {
 }
 
 const CATEGORIES = [
-  { id: 'home', label: 'হোম', icon: <Home size={18} /> },
+  { id: 'all', label: 'সব পণ্য', icon: <Package size={18} /> },
   { id: 'battery', label: 'ব্যাটারি', icon: <Battery size={18} /> },
   { id: 'rickshaw', label: 'ইলেকট্রিক রিকশা', icon: <Truck size={18} /> },
   { id: 'engine', label: 'ইঞ্জিন পার্টস', icon: <Settings size={18} /> },
@@ -58,7 +57,6 @@ const CATEGORIES = [
   { id: 'electrical', label: 'ইলেকট্রিক্যাল', icon: <Zap size={18} /> },
   { id: 'accessories', label: 'আনুষাঙ্গিক', icon: <Wrench size={18} /> },
   { id: 'tools', label: 'সরঞ্জাম', icon: <Hammer size={18} /> },
-  { id: 'contact', label: 'যোগাযোগ', icon: <MapPin size={18} /> },
 ];
 
 const PRODUCTS: Product[] = [
@@ -129,7 +127,14 @@ const formatPrice = (price: number) => {
 export default function ProductShowcase() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [shareProduct, setShareProduct] = useState<Product | null>(null);
+  const [activeCategory, setActiveCategory] = useState('all');
   const [isCopied, setIsCopied] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const filteredProducts = useMemo(() => {
+    if (activeCategory === 'all') return PRODUCTS;
+    return PRODUCTS.filter(p => p.category === activeCategory);
+  }, [activeCategory]);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -164,86 +169,177 @@ export default function ProductShowcase() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAF9] font-sans selection:bg-green-100">
-      <nav className="bg-[#1B7E43] text-white py-3 sticky top-20 left-0 right-0 z-40 shadow-md">
-        <div className="container mx-auto px-4 flex items-center gap-6 overflow-x-auto no-scrollbar">
-          {CATEGORIES.map(cat => (
-            <button key={cat.id} className="flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:text-green-200 transition-colors">
-              {cat.icon}
-              {cat.label}
-            </button>
-          ))}
+    <div className="min-h-screen pt-20 bg-[#F8FAF9] font-sans selection:bg-green-100">
+      <nav className="bg-[#1B7E43] text-white sticky top-0 z-50 shadow-md">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="hidden lg:flex items-center gap-4">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-sm font-bold transition-all ${
+                    activeCategory === cat.id ? 'bg-white text-[#1B7E43]' : 'hover:bg-white/10'
+                  }`}
+                >
+                  {cat.icon}
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="hidden md:flex lg:hidden items-center gap-2">
+              {CATEGORIES.slice(0, 4).map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-bold transition-all ${
+                    activeCategory === cat.id ? 'bg-white text-[#1B7E43]' : 'hover:bg-white/10'
+                  }`}
+                >
+                  {cat.icon}
+                  {cat.label}
+                </button>
+              ))}
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 hover:bg-white/10 rounded-sm">
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+
+            <div className="md:hidden">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 hover:bg-white/10 rounded-sm">
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
         </div>
+
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-[#156334] border-t border-white/10 overflow-hidden"
+            >
+              <div className="container mx-auto px-4 py-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setActiveCategory(cat.id);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-3 p-3 rounded-sm text-sm font-bold transition-all border border-transparent ${
+                      activeCategory === cat.id ? 'bg-white text-[#1B7E43]' : 'hover:border-white/20'
+                    }`}
+                  >
+                    {cat.icon}
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatePresence mode="wait">
-            {PRODUCTS.map(product => (
-              <motion.div
-                layout
-                key={product.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white rounded-sm border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden"
-              >
-                <div className="relative aspect-square p-4 bg-white">
-                  <div className="relative w-full h-full border border-slate-100 rounded-sm overflow-hidden group-hover:border-green-500 transition-colors duration-300">
-                    <Image src={IMAGE_URL} alt={product.name} fill className="object-contain p-4 group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                </div>
-
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2 py-0.5 rounded-sm border border-green-100">
-                      {product.brand}
-                    </span>
-                    <span className="text-[10px] font-bold text-green-700 flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                      স্টকে আছে
-                    </span>
-                  </div>
-
-                  <h3 className="text-slate-800 font-bold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
-
-                  <div className="flex items-center gap-1 mb-4">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={12} className={i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'} />
-                      ))}
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400 ml-1">({product.ratingCount})</span>
-                  </div>
-
-                  <div className="mt-auto">
-                    <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-xl font-black text-green-700">{formatPrice(product.offerPrice)}</span>
-                      <span className="text-xs text-slate-300 line-through">{formatPrice(product.originalPrice)}</span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => setSelectedProduct(product)}
-                        className="bg-[#1B7E43] hover:bg-[#156334] text-white py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
-                      >
-                        <Eye size={16} />
-                        বিস্তারিত
-                      </button>
-                      <button
-                        onClick={() => setShareProduct(product)}
-                        className="border border-slate-200 hover:border-green-600 hover:text-green-700 text-slate-600 py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
-                      >
-                        <Share2 size={16} />
-                        শেয়ার
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-2xl font-black text-slate-800">{CATEGORIES.find(c => c.id === activeCategory)?.label || 'পণ্যসমূহ'}</h2>
+            <p className="text-slate-500 text-sm font-medium">আপনার পছন্দের পণ্যটি বেছে নিন</p>
+          </div>
+          <div className="h-[1px] flex-grow bg-slate-200 mx-4 hidden md:block" />
+          <span className="bg-slate-100 px-3 py-1 text-xs font-bold text-slate-400 rounded-sm uppercase tracking-wider">
+            {filteredProducts.length} items found
+          </span>
         </div>
+
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map(product => (
+                <motion.div
+                  layout
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white rounded-sm border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full overflow-hidden"
+                >
+                  <div className="relative aspect-square p-4 bg-white">
+                    <div className="relative w-full h-full border border-slate-100 rounded-sm overflow-hidden group-hover:border-green-500 transition-colors duration-300">
+                      <Image src={IMAGE_URL} alt={product.name} fill className="object-contain p-4 group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                  </div>
+
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2 py-0.5 rounded-sm border border-green-100">
+                        {product.brand}
+                      </span>
+                      <span className="text-[10px] font-bold text-green-700 flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        স্টকে আছে
+                      </span>
+                    </div>
+
+                    <h3 className="text-slate-800 font-bold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
+
+                    <div className="flex items-center gap-1 mb-4">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={12} className={i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'} />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-400 ml-1">({product.ratingCount})</span>
+                    </div>
+
+                    <div className="mt-auto">
+                      <div className="flex items-baseline gap-2 mb-4">
+                        <span className="text-xl font-black text-green-700">{formatPrice(product.offerPrice)}</span>
+                        <span className="text-xs text-slate-300 line-through">{formatPrice(product.originalPrice)}</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="bg-[#1B7E43] hover:bg-[#156334] text-white py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
+                        >
+                          <Eye size={16} />
+                          বিস্তারিত
+                        </button>
+                        <button
+                          onClick={() => setShareProduct(product)}
+                          className="border border-slate-200 hover:border-green-600 hover:text-green-700 text-slate-600 py-2.5 rounded-sm flex items-center justify-center gap-2 text-xs font-bold transition-all active:scale-95"
+                        >
+                          <Share2 size={16} />
+                          শেয়ার
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-20 text-slate-400 gap-4"
+          >
+            <div className="p-6 bg-slate-50 rounded-sm">
+              <Package size={64} strokeWidth={1} />
+            </div>
+            <p className="font-bold">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি</p>
+            <button onClick={() => setActiveCategory('all')} className="text-green-600 text-sm font-bold border-b border-green-600 pb-0.5 hover:text-green-700">
+              সব পণ্য দেখুন
+            </button>
+          </motion.div>
+        )}
       </main>
 
       <AnimatePresence>
@@ -260,7 +356,7 @@ export default function ProductShowcase() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-4xl bg-white rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row"
+              className="relative w-full max-w-4xl bg-white rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] overflow-y-auto"
             >
               <button
                 onClick={() => setSelectedProduct(null)}
@@ -436,15 +532,6 @@ export default function ProductShowcase() {
     </div>
   );
 }
-
 ```
 
-Update this page.tsx with the following instructions.
-1. Make nav responsive for mobile, tablet, and desktop.
-    - in mobile it show hamberger, in tablet it show some button and hamberger, 
-2. remove Home, and contact from nav.
-3. make filter work with products category. 
-
-and remember 
-  - do not change style.
-  - do not change border-radius.
+Now please change only theme color. please use gray color. You only change background color. do not change others style. 
