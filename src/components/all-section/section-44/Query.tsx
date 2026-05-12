@@ -10,7 +10,32 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Eye, Share2, Package, Battery, Settings, Disc, Droplets, Zap, Truck, Scale, Clock, ShieldCheck, X, Menu, LucideIcon } from 'lucide-react';
+import {
+  Star,
+  Eye,
+  Share2,
+  Package,
+  Battery,
+  Settings,
+  Disc,
+  Droplets,
+  Zap,
+  Truck,
+  Scale,
+  Clock,
+  ShieldCheck,
+  X,
+  Menu,
+  Wrench,
+  PenTool,
+  LucideIcon,
+  Facebook,
+  Twitter,
+  Linkedin,
+  MessageCircle,
+  Copy,
+  Check,
+} from 'lucide-react';
 import Image from 'next/image';
 import { IProductSectionData, defaultDataSection44, ProductSectionProps, IProductItem } from './data';
 
@@ -25,6 +50,8 @@ const iconMap: Record<string, LucideIcon> = {
   Clock,
   ShieldCheck,
   Scale,
+  Wrench,
+  PenTool,
 };
 
 const formatPrice = (price: number) => '৳' + price.toLocaleString('bn-BD');
@@ -44,6 +71,8 @@ const QuerySection = ({ data }: ProductSectionProps) => {
   }
 
   const [selectedProduct, setSelectedProduct] = useState<IProductItem | null>(null);
+  const [shareProduct, setShareProduct] = useState<IProductItem | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -146,15 +175,71 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                       {product.brand}
                     </span>
                   </div>
+                  {product.inStock && (
+                    <div className="absolute top-4 right-4">
+                      <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase border border-emerald-200">
+                        স্টক আছে
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-slate-800 font-bold text-lg mb-3 line-clamp-2 min-h-[3.5rem] leading-snug">{product.name}</h3>
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="flex flex-col">
-                      <span className="text-2xl font-black text-emerald-700">{formatPrice(product.offerPrice)}</span>
-                      <span className="text-xs text-slate-400 line-through font-medium">{formatPrice(product.originalPrice)}</span>
+                  <h3 className="text-slate-800 font-bold text-lg mb-2 line-clamp-2 min-h-[3.5rem] leading-snug">{product.name}</h3>
+                  <div className="flex items-center gap-1 mb-3">
+                    <div className="flex text-amber-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={12}
+                          fill={i < Math.floor(product.rating) ? 'currentColor' : 'none'}
+                          className={i < Math.floor(product.rating) ? 'text-amber-400' : 'text-slate-300'}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] text-slate-500 font-medium ml-1">({product.rating})</span>
+                  </div>
+
+                  {product.features && product.features.length > 0 && (
+                    <ul className="space-y-1.5 mb-4">
+                      {product.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start text-xs text-slate-600 gap-1.5 font-medium">
+                          <svg
+                            className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="leading-tight">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-end gap-2">
+                      <span className="text-2xl font-black text-emerald-700 leading-none">{formatPrice(product.offerPrice)}</span>
+                      <span className="text-xs text-slate-400 line-through font-medium mb-1">{formatPrice(product.originalPrice)}</span>
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-4 mb-5 text-xs font-bold text-slate-500">
+                    <div className="flex items-center gap-1.5">
+                      <div className="p-1 bg-blue-50 text-blue-500 rounded-full">
+                        <ShieldCheck size={12} />
+                      </div>
+                      {product.warranty}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="p-1 bg-amber-50 text-amber-500 rounded-full">
+                        <Scale size={12} />
+                      </div>
+                      {product.weight}
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3 mt-auto">
                     <button
                       onClick={() => setSelectedProduct(product)}
@@ -162,7 +247,10 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     >
                       <Eye size={18} /> বিস্তারিত
                     </button>
-                    <button className="border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-600 h-12 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all active:scale-95">
+                    <button
+                      onClick={() => setShareProduct(product)}
+                      className="border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-600 h-12 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all active:scale-95"
+                    >
                       <Share2 size={18} /> শেয়ার
                     </button>
                   </div>
@@ -175,7 +263,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
 
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 pt-20 z-[60] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -245,10 +333,10 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                       <span className="w-8 h-1 bg-emerald-600 rounded-full" /> Product Details
                     </h4>
                     <div className="space-y-4">
-                      {selectedProduct.descriptionImages.length > 0 ? (
-                        selectedProduct.descriptionImages.map((img, i) => (
+                      {selectedProduct.descriptionImages?.length > 0 ? (
+                        selectedProduct.descriptionImages?.map((img, i) => (
                           <div key={i} className="relative w-full rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
-                            <img src={img} alt="Product description" className="w-full h-auto" />
+                            <Image width={1200} height={1200} src={img} alt="Product description" className="w-full h-auto" />
                           </div>
                         ))
                       ) : (
@@ -266,6 +354,108 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     অর্ডার করতে ক্লিক করুন
                   </button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {shareProduct && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShareProduct(null)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl p-6 md:p-8"
+            >
+              <button
+                onClick={() => setShareProduct(null)}
+                className="absolute top-4 right-4 z-50 p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              <h3 className="text-2xl font-black text-slate-800 mb-6 pr-8">Share &quot;{shareProduct.name}&quot;</h3>
+
+              <div className="grid grid-cols-4 gap-4 mb-8">
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-col items-center gap-2 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                    <Facebook size={24} />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">Facebook</span>
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(shareProduct.name)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-col items-center gap-2 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-all shadow-sm">
+                    <Twitter size={24} />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">Twitter</span>
+                </a>
+                <a
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareProduct.name + ' - ' + (typeof window !== 'undefined' ? window.location.href : ''))}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-col items-center gap-2 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
+                    <MessageCircle size={24} />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">WhatsApp</span>
+                </a>
+                <a
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&title=${encodeURIComponent(shareProduct.name)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex flex-col items-center gap-2 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center group-hover:bg-blue-700 group-hover:text-white transition-all shadow-sm">
+                    <Linkedin size={24} />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-500 uppercase">LinkedIn</span>
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-2xl">
+                <div className="flex-1 truncate px-3 text-sm text-slate-500 font-medium">
+                  {typeof window !== 'undefined' ? window.location.href : 'https://example.com/product'}
+                </div>
+                <button
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      navigator.clipboard.writeText(window.location.href);
+                      setIsCopied(true);
+                      setTimeout(() => setIsCopied(false), 2000);
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-900/10 active:scale-95 whitespace-nowrap"
+                >
+                  {isCopied ? (
+                    <>
+                      <Check size={16} /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={16} /> Copy URL
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           </div>
@@ -291,7 +481,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     <div className="flex -space-x-3">
                       {[1, 2, 3, 4].map(i => (
                         <div key={i} className="h-10 w-10 rounded-full border-2 border-emerald-700 bg-emerald-100 overflow-hidden">
-                          <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="" />
+                          <Image width={1200} height={1200} src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User Count" />
                         </div>
                       ))}
                       <div className="h-10 px-3 flex items-center justify-center bg-white/20 backdrop-blur rounded-full text-xs font-black">10K+</div>

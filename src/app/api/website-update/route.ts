@@ -39,7 +39,6 @@ export async function POST(req: Request) {
     }
     const created = await addPath(path.trim());
     return NextResponse.json({ path: created }, { status: 201 });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error: unknown) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((error as any)?.code === 11000) {

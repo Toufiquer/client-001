@@ -9,11 +9,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon } from 'lucide-react';
+import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { IProductSectionData, defaultDataSection44, IProductItem, ICategoryItem } from './data';
+import Image from 'next/image';
 
 export interface SectionFormProps {
   data?: IProductSectionData;
@@ -28,7 +29,7 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
       setFormData({ ...defaultDataSection44, ...data });
     }
   }, [data]);
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateField = (field: keyof IProductSectionData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -59,10 +60,11 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
       inStock: true,
       category: formData.categories[0]?.id || 'all',
       image: 'https://i.ibb.co/bL4F59C/3.png',
+      features: [],
     };
     updateField('products', [...formData.products, newProd]);
   };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateProduct = (idx: number, field: keyof IProductItem, value: any) => {
     const newProds = [...formData.products];
     newProds[idx] = { ...newProds[idx], [field]: value };
@@ -164,7 +166,7 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                       <div className="lg:col-span-4 space-y-4">
                         <div className="aspect-square bg-white rounded-2xl overflow-hidden relative border border-zinc-800">
-                          <img src={product.image} alt="" className="w-full h-full object-contain p-4" />
+                          <Image height={1200} width={1200} src={product.image} alt="" className="w-full h-full object-contain p-4" />
                           <div className="absolute inset-x-0 bottom-0 p-3 bg-black/60 backdrop-blur-sm">
                             <Label className="text-[10px] text-zinc-300">Thumbnail URL</Label>
                             <Input
@@ -273,6 +275,44 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
                             onChange={e => updateProduct(pIdx, 'weight', e.target.value)}
                             className="bg-zinc-950 border-zinc-800 h-10"
                           />
+                        </div>
+                        <div className="md:col-span-2 space-y-3 mt-4 border-t border-zinc-800 pt-4">
+                          <Label className="text-xs font-bold text-zinc-400 flex items-center gap-2">
+                            <List size={14} /> Features
+                          </Label>
+                          <div className="space-y-2">
+                            {product.features?.map((feat, fIdx) => (
+                              <div key={fIdx} className="relative group/feat">
+                                <Input
+                                  value={feat}
+                                  onChange={e => {
+                                    const newFeats = [...(product.features || [])];
+                                    newFeats[fIdx] = e.target.value;
+                                    updateProduct(pIdx, 'features', newFeats);
+                                  }}
+                                  className="h-8 text-xs bg-zinc-950 border-zinc-800 pr-8"
+                                />
+                                <button
+                                  onClick={() => {
+                                    const newFeats = product.features?.filter((_, i) => i !== fIdx);
+                                    updateProduct(pIdx, 'features', newFeats);
+                                  }}
+                                  className="absolute top-1/2 -translate-y-1/2 right-2 text-zinc-500 hover:text-red-400 transition-all"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              onClick={() => {
+                                const newFeats = [...(product.features || []), ''];
+                                updateProduct(pIdx, 'features', newFeats);
+                              }}
+                              className="w-full h-8 border border-dashed border-zinc-700 rounded-lg text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 flex items-center justify-center transition-all text-xs"
+                            >
+                              <Plus size={14} className="mr-1" /> Add Feature
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

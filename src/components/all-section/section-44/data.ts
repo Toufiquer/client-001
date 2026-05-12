@@ -28,6 +28,7 @@ export interface IProductItem {
   inStock: boolean;
   category: string;
   image: string;
+  features?: string[];
 }
 
 export interface IFooterFeature {
@@ -58,6 +59,11 @@ export const defaultDataSection44: IProductSectionData = {
     { id: 'battery', label: 'ব্যাটারি', iconName: 'Battery' },
     { id: 'rickshaw', label: 'ইলেকট্রিক রিকশা', iconName: 'Truck' },
     { id: 'engine', label: 'ইঞ্জিন পার্টস', iconName: 'Settings' },
+    { id: 'tyre', label: 'টায়ার ও চাকা', iconName: 'Disc' },
+    { id: 'lubricant', label: 'লুব্রিকেন্ট', iconName: 'Droplets' },
+    { id: 'electrical', label: 'ইলেকট্রিক্যাল', iconName: 'Zap' },
+    { id: 'accessories', label: 'আনুষাঙ্গিক', iconName: 'Wrench' },
+    { id: 'tools', label: 'সরঞ্জাম', iconName: 'PenTool' },
   ],
   products: [
     {
@@ -76,7 +82,56 @@ export const defaultDataSection44: IProductSectionData = {
       weight: '১০.৫ কেজি',
       inStock: true,
       category: 'battery',
-      image: 'https://i.ibb.co/bL4F59C/3.png',
+      image: 'https://placehold.co/400?text=No+Image',
+      features: ['LiFePO4 কেমিস্ট্রি', '৩০০০+ সাইকেল লাইফ', 'BMS সুরক্ষা সহ'],
+    },
+    {
+      id: 'silverpack',
+      brand: 'SilverPack',
+      name: 'লিথিয়াম প্যাক সিলভার সিরিজ (Top Label)',
+      rating: 4.6,
+      ratingCount: 15,
+      descriptionImages: [],
+      offerPrice: 19000,
+      originalPrice: 22000,
+      warranty: '২ বছর',
+      weight: '১২ কেজি',
+      inStock: true,
+      category: 'battery',
+      image: 'https://placehold.co/400?text=No+Image',
+      features: ['হাই ডিসচার্জ রেট', 'সিলভার অ্যালয় টার্মিনাল', 'কম্প্যাক্ট ডিজাইন'],
+    },
+    {
+      id: 'powerhandle',
+      brand: 'PowerHandle',
+      name: 'লিথিয়াম প্যাক - হ্যান্ডেল ও টার্মিনাল সিরিজ',
+      rating: 4.5,
+      ratingCount: 20,
+      descriptionImages: [],
+      offerPrice: 17500,
+      originalPrice: 20000,
+      warranty: '২ বছর',
+      weight: '১১ কেজি',
+      inStock: true,
+      category: 'battery',
+      image: 'https://placehold.co/400?text=No+Image',
+      features: ['বলয়যুক্ত হ্যান্ডেল', 'মজবুত টার্মিনাল', 'ওয়াটারপ্রুফ কেসিং'],
+    },
+    {
+      id: 'bluepower',
+      brand: 'BluePower',
+      name: 'লিথিয়াম প্যাক ব্লু ফ্রন্ট লেবেল',
+      rating: 4.4,
+      ratingCount: 10,
+      descriptionImages: [],
+      offerPrice: 17000,
+      originalPrice: 18500,
+      warranty: '২ বছর',
+      weight: '১০.৫ কেজি',
+      inStock: true,
+      category: 'battery',
+      image: 'https://placehold.co/400?text=No+Image',
+      features: ['হাই-টেম্পারেচার সহনশীল', 'দ্রুত চার্জিং', 'লং সাইকেল লাইফ'],
     },
   ],
   footerCtaTitle: 'সেরা মূল্যে ইলেকট্রিক রিকশা ও ব্যাটারি কিনুন',
