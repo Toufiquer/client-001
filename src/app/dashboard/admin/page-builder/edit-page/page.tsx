@@ -276,7 +276,9 @@ function EditPageContent() {
   const [selectedSectionCategory, setSelectedSectionCategory] = useState<string>('All');
   const [sectionPreviewKey, setSectionPreviewKey] = useState<string | null>(null);
   const [paginationPage, setPaginationPage] = useState(1);
-  const ITEMS_PER_PAGE = 10;
+  const [previewGridSize, setPreviewGridSize] = useState<1 | 2 | 3>(3);
+  const ITEMS_PER_PAGE = previewGridSize;
+  const previewGridColumnsClass = previewGridSize === 1 ? 'grid-cols-1' : previewGridSize === 2 ? 'grid-cols-2' : 'grid-cols-3';
 
   useEffect(() => {
     if (currentPage?.content) {
@@ -286,7 +288,7 @@ function EditPageContent() {
 
   useEffect(() => {
     setPaginationPage(1);
-  }, [activeAddType, selectedSectionCategory]);
+  }, [activeAddType, selectedSectionCategory, previewGridSize]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -650,6 +652,19 @@ function EditPageContent() {
                           </p>
                         </div>
                       </div>
+                      <div className="flex items-center gap-2">
+                        {[1, 2, 3].map(size => (
+                          <Button
+                            key={size}
+                            size="sm"
+                            variant="outlineGlassy"
+                            onClick={() => setPreviewGridSize(size as 1 | 2 | 3)}
+                            className={previewGridSize === size ? 'bg-white/10' : ''}
+                          >
+                            {size}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
 
                     {isSectionMode && (
@@ -676,7 +691,7 @@ function EditPageContent() {
                   <ScrollArea className="flex-1 min-h-0 w-full bg-black/20">
                     <div className="p-6">
                       {isSectionMode ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6 pb-20">
+                        <div className={`grid ${previewGridColumnsClass} gap-6 pb-20`}>
                           {paginatedItems.map(key => {
                             const config = TypedAllSections[key];
                             const PreviewComp = config.query;
@@ -684,18 +699,18 @@ function EditPageContent() {
                             return (
                               <div
                                 key={key}
-                                className="group relative bg-slate-900 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col h-[320px]"
+                                className="group relative bg-slate-900 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col h-full min-h-[100vh]"
                               >
                                 <div className="relative flex-1 bg-black/40 overflow-hidden">
                                   <div className="absolute inset-0 flex items-center justify-center p-4">
-                                    <div className="w-[200%] h-[200%] origin-center scale-[0.5] pointer-events-none select-none flex items-start justify-center pt-10">
+                                    <div className="w-[200%] h-full origin-center scale-[0.8] pointer-events-none select-none flex items-start justify-center pt-10">
                                       {PreviewComp ? <PreviewComp data={JSON.stringify(config.data)} /> : <div className="text-slate-600">No Preview</div>}
                                     </div>
                                   </div>
                                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80" />
 
                                   <div className="absolute top-3 left-3">
-                                    <span className="bg-black/60 backdrop-blur text-[10px] text-white/80 px-2 py-1 rounded border border-white/5">
+                                    <span className="bg-black/60 backdrop-blur text-[10px] text-white/80 px-2 py-1 rounded-sm border border-white/5">
                                       {config.category}
                                     </span>
                                   </div>
@@ -732,7 +747,7 @@ function EditPageContent() {
                           )}
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+                        <div className={`grid ${previewGridColumnsClass} gap-6 pb-10`}>
                           {paginatedItems.map(key => {
                             const config = meta.collection[key];
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -742,9 +757,9 @@ function EditPageContent() {
                               <div
                                 key={key}
                                 onClick={() => handleAddItem(activeAddType, key)}
-                                className="group cursor-pointer rounded-2xl border border-white/10 bg-black/20 overflow-hidden hover:border-white/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                                className="group cursor-pointer rounded-2xl border border-white/10 bg-black/20 overflow-hidden hover:border-white/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-[calc(85vh-220px)]"
                               >
-                                <div className="h-[180px] bg-slate-900/50 relative overflow-hidden p-4 flex items-center justify-center border-b border-white/5">
+                                <div className="h-[calc(85vh-300px)] bg-slate-900/50 relative overflow-hidden p-4 flex items-center justify-center border-b border-white/5">
                                   <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
                                   <div className="scale-[0.6] w-full h-full origin-center flex items-center justify-center pointer-events-none">
                                     {DisplayComponent ? <DisplayComponent /> : <span className="text-slate-500">Preview</span>}

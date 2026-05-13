@@ -61,12 +61,12 @@ const QuerySection = ({ data }: ProductSectionProps) => {
   if (data) {
     if (typeof data === 'string') {
       try {
-        sectionData = JSON.parse(data) as IProductSectionData;
+        sectionData = { ...defaultDataSection44, ...(JSON.parse(data) as IProductSectionData) };
       } catch (e) {
         console.error(e);
       }
     } else {
-      sectionData = data;
+      sectionData = { ...defaultDataSection44, ...data };
     }
   }
 
@@ -80,6 +80,8 @@ const QuerySection = ({ data }: ProductSectionProps) => {
     if (activeCategory === 'all') return sectionData.products;
     return sectionData.products.filter(p => p.category === activeCategory);
   }, [activeCategory, sectionData.products]);
+  const whatsappNumber = sectionData.whatsappNumber.replace(/\D/g, '') || defaultDataSection44.whatsappNumber;
+  const createWhatsappUrl = (message: string) => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
   return (
     <div className="min-h-screen bg-[#F8FAF9] font-sans selection:bg-green-100">
@@ -332,6 +334,12 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     <h4 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                       <span className="w-8 h-1 bg-emerald-600 rounded-full" /> Product Details
                     </h4>
+                    {selectedProduct.description && (
+                      <div
+                        className="prose prose-slate max-w-none text-slate-600"
+                        dangerouslySetInnerHTML={{ __html: selectedProduct.description }}
+                      />
+                    )}
                     <div className="space-y-4">
                       {selectedProduct.descriptionImages?.length > 0 ? (
                         selectedProduct.descriptionImages?.map((img, i) => (
@@ -350,9 +358,14 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 </div>
 
                 <div className="p-8 border-t border-slate-100 sticky bottom-0 bg-white/80 backdrop-blur-md">
-                  <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-16 rounded-2xl font-black text-xl shadow-xl shadow-emerald-900/20 transition-all flex items-center justify-center gap-3">
-                    অর্ডার করতে ক্লিক করুন
-                  </button>
+                  <a
+                    href={createWhatsappUrl(`আমি ${selectedProduct.name} অর্ডার করতে চাই।`)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-16 rounded-2xl font-black text-xl shadow-xl shadow-emerald-900/20 transition-all flex items-center justify-center gap-3"
+                  >
+                    <MessageCircle size={24} /> অর্ডার করতে ক্লিক করুন
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -473,9 +486,14 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 <h2 className="text-4xl md:text-6xl font-black leading-tight">{sectionData.footerCtaTitle}</h2>
                 <p className="text-xl text-emerald-100 max-w-lg opacity-90 leading-relaxed font-medium">{sectionData.footerCtaDesc}</p>
                 <div className="flex flex-wrap gap-6 pt-4">
-                  <button className="px-10 py-5 bg-white text-emerald-900 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-emerald-950/20">
-                    অর্ডার করতে ক্লিক করুন
-                  </button>
+                  <a
+                    href={createWhatsappUrl('আমি পণ্য অর্ডার করতে চাই।')}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-10 py-5 bg-white text-emerald-900 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-emerald-950/20 flex items-center gap-3"
+                  >
+                    <MessageCircle size={24} /> অর্ডার করতে ক্লিক করুন
+                  </a>
                   <div className="flex flex-col justify-center">
                     <p className="text-emerald-100 font-bold mb-1">Satisfied Customers</p>
                     <div className="flex -space-x-3">

@@ -20,6 +20,7 @@ export interface IProductItem {
   name: string;
   rating: number;
   ratingCount: number;
+  description: string;
   descriptionImages: string[];
   offerPrice: number;
   originalPrice: number;
@@ -40,6 +41,7 @@ export interface IFooterFeature {
 export interface IProductSectionData {
   title: string;
   subtitle: string;
+  whatsappNumber: string;
   categories: ICategoryItem[];
   products: IProductItem[];
   footerCtaTitle: string;
@@ -54,6 +56,7 @@ export interface ProductSectionProps {
 export const defaultDataSection44: IProductSectionData = {
   title: 'পণ্যসমূহ',
   subtitle: 'আপনার পছন্দের পণ্যটি বেছে নিন',
+  whatsappNumber: '8801700000000',
   categories: [
     { id: 'all', label: 'সব পণ্য', iconName: 'Package' },
     { id: 'battery', label: 'ব্যাটারি', iconName: 'Battery' },
@@ -72,6 +75,7 @@ export const defaultDataSection44: IProductSectionData = {
       name: 'LiFePO4 12V 100Ah ব্যাটারি (ব্ল্যাক সিরিজ)',
       rating: 4.8,
       ratingCount: 12,
+      description: '<p>উন্নত LiFePO4 প্রযুক্তির দীর্ঘস্থায়ী ব্যাটারি, ইলেকট্রিক রিকশা ও দৈনন্দিন ব্যবহারের জন্য নির্ভরযোগ্য পারফরম্যান্স দেয়।</p>',
       descriptionImages: [
         'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=1000&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop',
@@ -91,6 +95,7 @@ export const defaultDataSection44: IProductSectionData = {
       name: 'লিথিয়াম প্যাক সিলভার সিরিজ (Top Label)',
       rating: 4.6,
       ratingCount: 15,
+      description: '<p>সিলভার সিরিজ লিথিয়াম প্যাক কম ওজন, স্থিতিশীল আউটপুট এবং দীর্ঘ ব্যাকআপের জন্য তৈরি।</p>',
       descriptionImages: [],
       offerPrice: 19000,
       originalPrice: 22000,
@@ -107,6 +112,7 @@ export const defaultDataSection44: IProductSectionData = {
       name: 'লিথিয়াম প্যাক - হ্যান্ডেল ও টার্মিনাল সিরিজ',
       rating: 4.5,
       ratingCount: 20,
+      description: '<p>মজবুত হ্যান্ডেল ও টার্মিনালসহ এই ব্যাটারি প্যাক সহজ বহনযোগ্য এবং নিয়মিত ব্যবহারে টেকসই।</p>',
       descriptionImages: [],
       offerPrice: 17500,
       originalPrice: 20000,
@@ -123,6 +129,7 @@ export const defaultDataSection44: IProductSectionData = {
       name: 'লিথিয়াম প্যাক ব্লু ফ্রন্ট লেবেল',
       rating: 4.4,
       ratingCount: 10,
+      description: '<p>ব্লু ফ্রন্ট লেবেল সিরিজ দ্রুত চার্জিং, তাপ সহনশীলতা এবং দীর্ঘ সাইকেল লাইফের সুবিধা দেয়।</p>',
       descriptionImages: [],
       offerPrice: 17000,
       originalPrice: 18500,

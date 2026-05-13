@@ -9,13 +9,14 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List, Search } from 'lucide-react';
+import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List, Search, MessageCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { IProductSectionData, defaultDataSection44, IProductItem, ICategoryItem } from './data';
 import Image from 'next/image';
 import ImageUploadManagerSingle from '@/components/dashboard-ui/ImageUploadManagerSingle';
+import RichTextEditorField from '@/components/dashboard-ui/RichTextEditorField';
 import { iconMap, iconOptions } from '@/components/all-icons/all-icons-jsx';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
@@ -123,6 +124,7 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
       name: 'New Product Name',
       rating: 5,
       ratingCount: 0,
+      description: '<p>Product description...</p>',
       descriptionImages: [],
       offerPrice: 0,
       originalPrice: 0,
@@ -157,6 +159,23 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
           </div>
 
           <div className="p-6 space-y-12">
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 border-b border-zinc-800 pb-4">
+                <MessageCircle className="text-zinc-500" size={20} />
+                <h3 className="text-lg font-semibold">WhatsApp Order Settings</h3>
+              </div>
+              <div className="max-w-md space-y-1">
+                <Label className="text-[10px] uppercase text-zinc-500">WhatsApp Number</Label>
+                <Input
+                  value={formData.whatsappNumber}
+                  onChange={e => updateField('whatsappNumber', e.target.value)}
+                  placeholder="8801700000000"
+                  className="bg-zinc-950 border-zinc-800 h-10"
+                />
+                <p className="text-xs text-zinc-500">Use country code only, for example 8801700000000.</p>
+              </div>
+            </section>
+
             <section className="space-y-6">
               <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
                 <div className="flex items-center gap-2">
@@ -314,6 +333,14 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
                             value={product.name}
                             onChange={e => updateProduct(pIdx, 'name', e.target.value)}
                             className="bg-zinc-950 border-zinc-800 h-10"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <RichTextEditorField
+                            id={`product-description-${product.id}`}
+                            label="Description"
+                            value={product.description || ''}
+                            onChange={value => updateProduct(pIdx, 'description', value)}
                           />
                         </div>
                         <div className="space-y-1">

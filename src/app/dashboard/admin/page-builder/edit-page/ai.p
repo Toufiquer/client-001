@@ -1,0 +1,1 @@
+I want each preview render with full height. and at the bottom there are two button named Preview and Add. 

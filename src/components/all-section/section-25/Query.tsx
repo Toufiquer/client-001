@@ -81,9 +81,9 @@ const QuerySection25 = ({ data }: SliderProps) => {
 
   const heightClass = {
     auto: 'h-auto aspect-video',
-    'fixed-sm': 'h-[300px]',
-    'fixed-md': 'h-[500px]',
-    'fixed-lg': 'h-[700px]',
+    'fixed-sm': 'h-[500px]',
+    'fixed-md': 'h-[660px]',
+    'fixed-lg': 'h-[1200px]',
     screen: 'h-screen',
   }[height];
 
@@ -118,11 +118,11 @@ const QuerySection25 = ({ data }: SliderProps) => {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      <div className={cn('overflow-hidden w-full rounded-xl bg-gray-900', heightClass)}>
+      <div className={cn('overflow-hidden w-full bg-gray-900', heightClass)}>
         <div className="flex h-full transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * itemWidthPercent}%)` }}>
           {slides.map(slide => (
             <div key={slide.id} className="flex-shrink-0 h-full relative px-1" style={{ width: `${itemWidthPercent}%` }}>
-              <div className="relative w-full h-full overflow-hidden rounded-lg">
+              <div className="relative w-full h-full overflow-hidden">
                 {slide.image ? (
                   <Image
                     width={2200}
