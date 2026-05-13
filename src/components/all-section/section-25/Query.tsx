@@ -32,9 +32,10 @@ const QuerySection25 = ({ data }: SliderProps) => {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  const { slides, autoplaySpeed, isAutoplay, infiniteLoop, itemsPerSlide, height, navPosition, showArrowsOnHover, overlayOpacity } = sliderData;
+  const { slides, autoplaySpeed, isAutoplay, infiniteLoop, itemsPerSlide, navPosition, showArrowsOnHover, overlayOpacity } = sliderData;
 
   const totalSlides = slides.length;
+  const [slideAspectRatios, setSlideAspectRatios] = useState<Record<string, string>>({});
 
   const nextSlide = useCallback(() => {
     setCurrentIndex(prev => {
@@ -79,13 +80,8 @@ const QuerySection25 = ({ data }: SliderProps) => {
     if (isRightSwipe) prevSlide();
   };
 
-  const heightClass = {
-    auto: 'h-auto aspect-video',
-    'fixed-sm': 'h-[500px]',
-    'fixed-md': 'h-[660px]',
-    'fixed-lg': 'h-[1200px]',
-    screen: 'h-screen',
-  }[height];
+  const activeSlide = slides[currentIndex];
+  const activeAspectRatio = activeSlide ? slideAspectRatios[activeSlide.id] || '16 / 9' : '16 / 9';
 
   const getNavClasses = () => {
     switch (navPosition) {
@@ -118,7 +114,7 @@ const QuerySection25 = ({ data }: SliderProps) => {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      <div className={cn('overflow-hidden w-full bg-gray-900', heightClass)}>
+      <div className="overflow-hidden w-full bg-gray-900" style={{ aspectRatio: activeAspectRatio }}>
         <div className="flex h-full transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * itemWidthPercent}%)` }}>
           {slides.map(slide => (
             <div key={slide.id} className="flex-shrink-0 h-full relative px-1" style={{ width: `${itemWidthPercent}%` }}>
@@ -129,7 +125,17 @@ const QuerySection25 = ({ data }: SliderProps) => {
                     height={2200}
                     src={slide.image}
                     alt={slide.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onLoad={event => {
+                      const { naturalWidth, naturalHeight } = event.currentTarget;
+
+                      if (!naturalWidth || !naturalHeight) return;
+
+                      setSlideAspectRatios(prev => ({
+                        ...prev,
+                        [slide.id]: `${naturalWidth} / ${naturalHeight}`,
+                      }));
+                    }}
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-600">No Image</div>

@@ -1,0 +1,1 @@
+Please look resource at '/resource' and update section-44 data.ts, Mutation.tsx, and Query.tsx. I want to see all default products in section-44. and  also update data.ts as related content. 

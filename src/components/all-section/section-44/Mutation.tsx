@@ -13,7 +13,7 @@ import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List, Search, Mess
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { IProductSectionData, defaultDataSection44, IProductItem, ICategoryItem } from './data';
+import { IProductSectionData, defaultDataSection44, IProductItem, ICategoryItem, IFooterFeature } from './data';
 import Image from 'next/image';
 import ImageUploadManagerSingle from '@/components/dashboard-ui/ImageUploadManagerSingle';
 import RichTextEditorField from '@/components/dashboard-ui/RichTextEditorField';
@@ -117,6 +117,17 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
     updateField('categories', newCats);
   };
 
+  const handleAddFooterFeature = () => {
+    const newFeature: IFooterFeature = { iconName: 'Package', label: 'New Feature', desc: 'Feature description' };
+    updateField('footerFeatures', [...formData.footerFeatures, newFeature]);
+  };
+
+  const updateFooterFeature = (idx: number, field: keyof IFooterFeature, value: string) => {
+    const newFeatures = [...formData.footerFeatures];
+    newFeatures[idx] = { ...newFeatures[idx], [field]: value };
+    updateField('footerFeatures', newFeatures);
+  };
+
   const handleAddProduct = () => {
     const newProd: IProductItem = {
       id: Date.now().toString(),
@@ -131,8 +142,8 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
       warranty: '1 Year',
       weight: '1kg',
       inStock: true,
-      category: formData.categories[0]?.id || 'all',
-      image: 'https://i.ibb.co/bL4F59C/3.png',
+      category: formData.categories.find(category => category.id !== 'all')?.id || 'all',
+      image: '/resource/battery-01-lifepo4-12v-100ah-black-front.jpeg',
       features: [],
     };
     updateField('products', [...formData.products, newProd]);
@@ -159,6 +170,39 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
           </div>
 
           <div className="p-6 space-y-12">
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 border-b border-zinc-800 pb-4">
+                <Package className="text-zinc-500" size={20} />
+                <h3 className="text-lg font-semibold">Section Content</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-zinc-500">Title</Label>
+                  <Input value={formData.title} onChange={e => updateField('title', e.target.value)} className="bg-zinc-950 border-zinc-800 h-10" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-zinc-500">Subtitle</Label>
+                  <Input value={formData.subtitle} onChange={e => updateField('subtitle', e.target.value)} className="bg-zinc-950 border-zinc-800 h-10" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-zinc-500">Footer CTA Title</Label>
+                  <Input
+                    value={formData.footerCtaTitle}
+                    onChange={e => updateField('footerCtaTitle', e.target.value)}
+                    className="bg-zinc-950 border-zinc-800 h-10"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] uppercase text-zinc-500">Footer CTA Description</Label>
+                  <Input
+                    value={formData.footerCtaDesc}
+                    onChange={e => updateField('footerCtaDesc', e.target.value)}
+                    className="bg-zinc-950 border-zinc-800 h-10"
+                  />
+                </div>
+              </div>
+            </section>
+
             <section className="space-y-6">
               <div className="flex items-center gap-2 border-b border-zinc-800 pb-4">
                 <MessageCircle className="text-zinc-500" size={20} />
@@ -209,6 +253,55 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
                     <div className="space-y-1">
                       <Label className="text-[10px] uppercase text-zinc-500">Icon</Label>
                       <IconSelector value={cat.iconName} onChange={val => updateCategory(idx, 'iconName', val)} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="space-y-6">
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+                <div className="flex items-center gap-2">
+                  <List className="text-zinc-500" size={20} />
+                  <h3 className="text-lg font-semibold">Footer Features</h3>
+                </div>
+                <Button onClick={handleAddFooterFeature} size="sm" variant="outline" className="border-zinc-700 hover:bg-zinc-800">
+                  <Plus className="w-4 h-4 mr-2" /> Add Feature
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {formData.footerFeatures.map((feature, idx) => (
+                  <div key={`${feature.label}-${idx}`} className="p-4 bg-zinc-950/50 border border-zinc-800 rounded-xl flex flex-col gap-3 relative group">
+                    <button
+                      onClick={() =>
+                        updateField(
+                          'footerFeatures',
+                          formData.footerFeatures.filter((_, i) => i !== idx),
+                        )
+                      }
+                      className="absolute -top-2 -right-2 p-1.5 bg-red-500/10 text-red-400 rounded-full hover:bg-red-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all shadow-xl"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] uppercase text-zinc-500">Label</Label>
+                      <Input
+                        value={feature.label}
+                        onChange={e => updateFooterFeature(idx, 'label', e.target.value)}
+                        className="h-9 bg-zinc-900 border-zinc-800"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] uppercase text-zinc-500">Description</Label>
+                      <Input
+                        value={feature.desc}
+                        onChange={e => updateFooterFeature(idx, 'desc', e.target.value)}
+                        className="h-9 bg-zinc-900 border-zinc-800"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] uppercase text-zinc-500">Icon</Label>
+                      <IconSelector value={feature.iconName} onChange={val => updateFooterFeature(idx, 'iconName', val)} />
                     </div>
                   </div>
                 ))}

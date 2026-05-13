@@ -52,6 +52,7 @@ const iconMap: Record<string, LucideIcon> = {
   Scale,
   Wrench,
   PenTool,
+  MessageCircle,
 };
 
 const formatPrice = (price: number) => '৳' + price.toLocaleString('bn-BD');
@@ -167,7 +168,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 key={product.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                transition={{ duration: 0.35, delay: Math.min(idx, 12) * 0.03 }}
                 className="bg-white rounded-sm border border-slate-200 overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 group flex flex-col h-full"
               >
                 <div className="relative aspect-square overflow-hidden bg-[#F1F5F2]">
@@ -261,6 +262,13 @@ const QuerySection = ({ data }: ProductSectionProps) => {
             ))}
           </AnimatePresence>
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="py-20 text-center border border-dashed border-slate-200 rounded-sm bg-white">
+            <Package className="mx-auto text-slate-300 mb-4" size={48} strokeWidth={1.5} />
+            <p className="text-slate-500 font-bold">এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি।</p>
+          </div>
+        )}
       </main>
 
       <AnimatePresence>
