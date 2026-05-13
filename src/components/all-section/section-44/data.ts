@@ -5,9 +5,6 @@
 | @copyright: Toufiquer, May, 2026
 |-----------------------------------------
 */
-
-'use client';
-
 export interface ICategoryItem {
   id: string;
   label: string;
@@ -52,6 +49,16 @@ export interface IProductSectionData {
 export interface ProductSectionProps {
   data?: IProductSectionData | string;
 }
+
+export const normalizeProductRouteValue = (value: string) => {
+  try {
+    return decodeURIComponent(value).trim().toLocaleLowerCase('bn-BD').replace(/\s+/g, ' ');
+  } catch {
+    return value.trim().toLocaleLowerCase('bn-BD').replace(/\s+/g, ' ');
+  }
+};
+
+export const getProductDetailPath = (product: Pick<IProductItem, 'name'>) => `/product/${encodeURIComponent(product.name)}`;
 
 const batteryDescription =
   '<p>লিথিয়াম ব্যাটারি প্যাকটি ইলেকট্রিক রিকশা, অটো ও দৈনন্দিন পাওয়ার ব্যাকআপের জন্য তৈরি। স্থিতিশীল আউটপুট, কম ওজন এবং দীর্ঘ সাইকেল লাইফের কারণে এটি নিয়মিত ব্যবহারে নির্ভরযোগ্য।</p>';

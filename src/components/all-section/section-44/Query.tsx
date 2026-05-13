@@ -37,7 +37,8 @@ import {
   Check,
 } from 'lucide-react';
 import Image from 'next/image';
-import { IProductSectionData, defaultDataSection44, ProductSectionProps, IProductItem } from './data';
+import Link from 'next/link';
+import { IProductSectionData, defaultDataSection44, ProductSectionProps, IProductItem, getProductDetailPath } from './data';
 
 const iconMap: Record<string, LucideIcon> = {
   Package,
@@ -244,12 +245,12 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mt-auto">
-                    <button
-                      onClick={() => setSelectedProduct(product)}
+                    <Link
+                      href={getProductDetailPath(product)}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white h-12 rounded-sm flex items-center justify-center gap-2 text-sm font-bold transition-all shadow-lg shadow-emerald-900/10 active:scale-95"
                     >
                       <Eye size={18} /> বিস্তারিত
-                    </button>
+                    </Link>
                     <button
                       onClick={() => setShareProduct(product)}
                       className="border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-600 h-12 rounded-sm flex items-center justify-center gap-2 text-sm font-bold transition-all active:scale-95"
