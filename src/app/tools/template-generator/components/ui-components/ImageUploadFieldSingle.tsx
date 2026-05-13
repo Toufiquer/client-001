@@ -38,7 +38,7 @@ const ImageUploadFieldSingle = () => {
       if (data.success) {
         const newImageUrl = data.data.url;
 
-        const saveResponse = await fetch('/api/media', {
+        const saveResponse = await fetch('/api/media/v1', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

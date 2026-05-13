@@ -40,7 +40,7 @@ const InternalImageDialog = ({ handleAddImages }: { handleAddImages: (newImage: 
 
       const data = await response.json();
       if (data.success) {
-        const saveResponse = await fetch('/api/media', {
+        const saveResponse = await fetch('/api/media/v1', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const InternalImageDialog = ({ handleAddImages }: { handleAddImages: (newImage: 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch('/api/media');
+        const response = await fetch('/api/media/v1');
         const data = await response.json();
 
         if (!data?.data || !Array.isArray(data.data)) {

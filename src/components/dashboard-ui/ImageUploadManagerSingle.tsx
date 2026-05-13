@@ -33,7 +33,7 @@ const InternalImageDialog = ({ onImageSelect, selectedImage, maxSizeMB = 1, maxW
   const fetchImages = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/media');
+      const response = await fetch('/api/media/v1');
       if (!response.ok) throw new Error('Failed to fetch images.');
       const data = await response.json();
 
@@ -82,7 +82,7 @@ const InternalImageDialog = ({ onImageSelect, selectedImage, maxSizeMB = 1, maxW
       const data = await response.json();
       if (data.success) {
         const newImageUrl = data.data.url;
-        await fetch('/api/media', {
+        await fetch('/api/media/v1', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

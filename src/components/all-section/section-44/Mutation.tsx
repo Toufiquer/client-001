@@ -8,13 +8,84 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Save, Plus, Trash2, Package, Tag, Layers, ImageIcon, List, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { IProductSectionData, defaultDataSection44, IProductItem, ICategoryItem } from './data';
 import Image from 'next/image';
+import ImageUploadManagerSingle from '@/components/dashboard-ui/ImageUploadManagerSingle';
+import { iconMap, iconOptions } from '@/components/all-icons/all-icons-jsx';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+
+const IconSelector = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [iconSearch, setIconSearch] = useState('');
+
+  const filteredIcons = useMemo(() => {
+    if (!iconSearch) return iconOptions;
+    return iconOptions.filter(name => name.toLowerCase().includes(iconSearch.toLowerCase()));
+  }, [iconSearch]);
+
+  const SelectedIcon = iconMap[value] || iconMap['Package'];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <button className="h-9 w-full bg-zinc-900 border border-zinc-800 rounded-md flex items-center px-3 gap-2 hover:bg-zinc-800 transition-colors">
+          {SelectedIcon && <SelectedIcon size={16} className="text-zinc-400 shrink-0" />}
+          <span className="text-xs text-zinc-300 flex-1 text-left truncate">{value || 'Select Icon...'}</span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md bg-zinc-950 border-zinc-800 text-zinc-100 p-6">
+        <DialogTitle className="text-lg font-semibold mb-4">Select an Icon</DialogTitle>
+        <div className="relative mb-4 group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-blue-400 transition-colors" />
+          <input
+            type="text"
+            value={iconSearch}
+            onChange={e => setIconSearch(e.target.value)}
+            placeholder="Search icons..."
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-9 pr-4 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-blue-500/50 transition-all"
+          />
+        </div>
+        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-3">
+          {filteredIcons.length > 0 ? (
+            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+              {filteredIcons.map(iconName => {
+                const IconComp = iconMap[iconName];
+                if (!IconComp) return null;
+                const isActive = value === iconName;
+                return (
+                  <button
+                    key={iconName}
+                    onClick={() => {
+                      onChange(iconName);
+                      setIsOpen(false);
+                    }}
+                    className={cn(
+                      'group/icon relative aspect-square flex flex-col items-center justify-center rounded-lg transition-all duration-200',
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50 scale-105 z-10'
+                        : 'bg-zinc-900/50 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200 hover:scale-105',
+                    )}
+                    title={iconName}
+                  >
+                    <IconComp size={18} strokeWidth={1.5} />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-zinc-600 text-xs">No icons found</div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export interface SectionFormProps {
   data?: IProductSectionData;
@@ -71,18 +142,6 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
     updateField('products', newProds);
   };
 
-  const handleAddDescImage = (pIdx: number) => {
-    const newProds = [...formData.products];
-    newProds[pIdx].descriptionImages = [...newProds[pIdx].descriptionImages, ''];
-    updateField('products', newProds);
-  };
-
-  const updateDescImage = (pIdx: number, imgIdx: number, val: string) => {
-    const newProds = [...formData.products];
-    newProds[pIdx].descriptionImages[imgIdx] = val;
-    updateField('products', newProds);
-  };
-
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -129,8 +188,8 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
                       <Input value={cat.label} onChange={e => updateCategory(idx, 'label', e.target.value)} className="h-9 bg-zinc-900 border-zinc-800" />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] uppercase text-zinc-500">Icon Name (Lucide)</Label>
-                      <Input value={cat.iconName} onChange={e => updateCategory(idx, 'iconName', e.target.value)} className="h-9 bg-zinc-900 border-zinc-800" />
+                      <Label className="text-[10px] uppercase text-zinc-500">Icon</Label>
+                      <IconSelector value={cat.iconName} onChange={val => updateCategory(idx, 'iconName', val)} />
                     </div>
                   </div>
                 ))}
@@ -165,48 +224,63 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                       <div className="lg:col-span-4 space-y-4">
-                        <div className="aspect-square bg-white rounded-2xl overflow-hidden relative border border-zinc-800">
-                          <Image height={1200} width={1200} src={product.image} alt="" className="w-full h-full object-contain p-4" />
-                          <div className="absolute inset-x-0 bottom-0 p-3 bg-black/60 backdrop-blur-sm">
-                            <Label className="text-[10px] text-zinc-300">Thumbnail URL</Label>
+                        <div className="bg-zinc-950/30 p-4 rounded-xl border border-zinc-800/50">
+                          <div className="mb-3">
+                            <Label className="text-[10px] text-zinc-300 mb-1 block">Thumbnail URL</Label>
                             <Input
                               value={product.image}
                               onChange={e => updateProduct(pIdx, 'image', e.target.value)}
-                              className="h-8 text-xs bg-zinc-900/50 border-zinc-700"
+                              placeholder="https://..."
+                              className="h-8 text-xs bg-zinc-900 border-zinc-800 mb-2"
                             />
                           </div>
+                          <ImageUploadManagerSingle label="" value={product.image} onChange={url => updateProduct(pIdx, 'image', url)} />
                         </div>
 
                         <div className="space-y-3">
                           <Label className="text-xs font-bold text-zinc-400 flex items-center gap-2">
                             <ImageIcon size={14} /> Description Images (Gallery)
                           </Label>
-                          <div className="grid grid-cols-2 gap-2">
-                            {product.descriptionImages?.map((img, imgIdx) => (
-                              <div key={imgIdx} className="relative group/img">
-                                <Input
-                                  value={img}
-                                  onChange={e => updateDescImage(pIdx, imgIdx, e.target.value)}
-                                  placeholder="Image URL"
-                                  className="h-8 text-[10px] bg-zinc-950 border-zinc-800"
-                                />
-                                <button
-                                  onClick={() => {
-                                    const newImgs = product.descriptionImages?.filter((_, i) => i !== imgIdx);
-                                    updateProduct(pIdx, 'descriptionImages', newImgs);
-                                  }}
-                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover/img:opacity-100 transition-all"
-                                >
-                                  <X size={10} />
-                                </button>
+                          <div className="bg-zinc-950/30 p-4 rounded-xl border border-zinc-800/50 space-y-4">
+                            {product.descriptionImages?.length > 0 && (
+                              <div className="flex flex-wrap gap-3">
+                                {product.descriptionImages.map((imgUrl, imgIdx) => (
+                                  <div key={imgIdx} className="relative group w-20 h-20">
+                                    <div className="relative w-full h-full rounded-md overflow-hidden border border-zinc-700 shadow-sm">
+                                      {imgUrl ? (
+                                        <Image src={imgUrl} alt={`Gallery ${imgIdx}`} fill className="object-cover" />
+                                      ) : (
+                                        <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-500 text-xs">Empty</div>
+                                      )}
+                                    </div>
+                                    <button
+                                      onClick={() => {
+                                        const newImgs = product.descriptionImages?.filter((_, i) => i !== imgIdx);
+                                        updateProduct(pIdx, 'descriptionImages', newImgs);
+                                      }}
+                                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10"
+                                    >
+                                      <X size={12} />
+                                    </button>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
-                            <button
-                              onClick={() => handleAddDescImage(pIdx)}
-                              className="h-8 border border-dashed border-zinc-700 rounded-lg text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 flex items-center justify-center transition-all"
-                            >
-                              <Plus size={14} />
-                            </button>
+                            )}
+
+                            <div className="border-t border-zinc-800 pt-3">
+                              <p className="text-xs text-zinc-500 mb-2">Add new gallery image</p>
+                              <ImageUploadManagerSingle
+                                label=""
+                                value=""
+                                onChange={url => {
+                                  if (url) {
+                                    const newProds = [...formData.products];
+                                    newProds[pIdx].descriptionImages = [...(newProds[pIdx].descriptionImages || []), url];
+                                    updateField('products', newProds);
+                                  }
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -333,6 +407,12 @@ const MutationSection = ({ data, onSubmit }: SectionFormProps) => {
           </div>
         </div>
       </div>
+      <style>{`
+        /* Thin scrollbar for icon area */
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+      `}</style>
     </div>
   );
 };

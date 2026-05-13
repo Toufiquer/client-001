@@ -59,7 +59,7 @@ const InternalImageDialog = ({
 
             const data = await response.json()
             if (data.success) {
-                const saveResponse = await fetch('/api/media', {
+                const saveResponse = await fetch('/api/media/v1', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const InternalImageDialog = ({
 
     useEffect(() => {
         const fetchImages = async () => {
-            const response = await fetch('/api/media')
+            const response = await fetch('/api/media/v1')
             const data = await response.json()
 
             const lstImage: string[] = data?.data.map(

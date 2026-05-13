@@ -36,7 +36,7 @@ const ImageDialog = ({ handleAddImages }: { handleAddImages: (newImage: string) 
 
       const data = await response.json();
       if (data.success) {
-        const saveResponse = await fetch('/api/media', {
+        const saveResponse = await fetch('/api/media/v1', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ const ImageDialog = ({ handleAddImages }: { handleAddImages: (newImage: string) 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch('/api/media');
+        const response = await fetch('/api/media/v1');
         if (!response.ok) {
           throw new Error('Failed to fetch images');
         }
