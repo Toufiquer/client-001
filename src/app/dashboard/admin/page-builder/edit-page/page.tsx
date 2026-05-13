@@ -699,9 +699,9 @@ function EditPageContent() {
                             return (
                               <div
                                 key={key}
-                                className="group relative bg-slate-900 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col h-full min-h-[100vh]"
+                                className="group relative bg-slate-900 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 hover:shadow-2xl transition-all duration-300 flex flex-col h-[calc(90vh)] min-h-130"
                               >
-                                <div className="relative flex-1 bg-black/40 overflow-hidden">
+                                <div className="relative flex-1 min-h-0 bg-black/40 overflow-hidden">
                                   <div className="absolute inset-0 flex items-center justify-center p-4">
                                     <div className="w-[200%] h-full origin-center scale-[0.8] pointer-events-none select-none flex items-start justify-center pt-10">
                                       {PreviewComp ? <PreviewComp data={JSON.stringify(config.data)} /> : <div className="text-slate-600">No Preview</div>}
@@ -716,7 +716,7 @@ function EditPageContent() {
                                   </div>
                                 </div>
 
-                                <div className="p-4 bg-white/5 border-t border-white/5 flex flex-col gap-3 relative z-10">
+                                <div className="p-4 bg-white/5 border-t border-white/5 flex flex-col gap-3 relative z-10 shrink-0">
                                   <div className="flex justify-between items-center">
                                     <h4 className="text-sm font-semibold text-slate-200 truncate pr-2">{key}</h4>
                                   </div>
