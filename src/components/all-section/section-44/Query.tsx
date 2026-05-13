@@ -265,7 +265,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
 
       <AnimatePresence>
         {selectedProduct && (
-          <div className="fixed inset-0 pt-20 z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 md:p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -277,51 +277,51 @@ const QuerySection = ({ data }: ProductSectionProps) => {
               initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              className="relative w-full max-w-5xl bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+              className="relative w-full max-w-5xl bg-white rounded-sm overflow-y-auto shadow-2xl flex flex-col md:flex-row max-h-[94vh]"
             >
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 z-50 p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-all"
+                className="fixed md:absolute top-3 right-3 z-[80] p-2 bg-white text-slate-900 shadow-lg border border-slate-200 hover:bg-slate-100 rounded-sm transition-all"
               >
                 <X size={24} />
               </button>
 
-              <div className="w-full md:w-5/12 bg-[#F1F5F2] p-8 md:p-12 flex items-center justify-center relative border-r border-slate-100">
+              <div className="w-full md:w-5/12 bg-[#F1F5F2] p-4 md:p-6 flex items-start justify-center relative border-r border-slate-100">
                 <div className="relative w-full aspect-square">
                   <Image src={selectedProduct.image} alt={selectedProduct.name} fill className="object-contain" priority />
                 </div>
               </div>
 
-              <div className="w-full md:w-7/12 flex flex-col overflow-y-auto">
-                <div className="p-8 md:p-12 space-y-8">
+              <div className="w-full md:w-7/12 flex flex-col">
+                <div className="p-4 md:p-6 space-y-4">
                   <div>
-                    <span className="text-sm font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full mb-4 inline-block">
+                    <span className="text-sm font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-sm mb-2 inline-block">
                       {selectedProduct.brand}
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight">{selectedProduct.name}</h2>
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">{selectedProduct.name}</h2>
                   </div>
 
-                  <div className="flex items-center gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-sm border border-slate-100">
                     <div>
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">Current Price</p>
-                      <div className="text-4xl font-black text-emerald-700">{formatPrice(selectedProduct.offerPrice)}</div>
+                      <div className="text-3xl font-black text-emerald-700">{formatPrice(selectedProduct.offerPrice)}</div>
                     </div>
-                    <div className="w-px h-12 bg-slate-200" />
+                    <div className="w-px h-10 bg-slate-200" />
                     <div>
                       <p className="text-slate-400 text-xs font-bold uppercase mb-1">Original</p>
                       <div className="text-xl text-slate-300 line-through font-bold">{formatPrice(selectedProduct.originalPrice)}</div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-4 bg-white border border-slate-100 rounded-xl">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-sm">
                       <Clock className="text-emerald-600" size={24} />
                       <div>
                         <p className="text-slate-400 text-[10px] font-bold uppercase">Warranty</p>
                         <p className="text-slate-800 font-bold">{selectedProduct.warranty}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-4 bg-white border border-slate-100 rounded-xl">
+                    <div className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-sm">
                       <Scale className="text-amber-500" size={24} />
                       <div>
                         <p className="text-slate-400 text-[10px] font-bold uppercase">Weight</p>
@@ -330,9 +330,9 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     </div>
                   </div>
 
-                  <div className="space-y-6">
-                    <h4 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                      <span className="w-8 h-1 bg-emerald-600 rounded-full" /> Product Details
+                  <div className="space-y-3">
+                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                      <span className="w-8 h-1 bg-emerald-600 rounded-sm" /> Product Details
                     </h4>
                     {selectedProduct.description && (
                       <div
@@ -343,12 +343,12 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     <div className="space-y-4">
                       {selectedProduct.descriptionImages?.length > 0 ? (
                         selectedProduct.descriptionImages?.map((img, i) => (
-                          <div key={i} className="relative w-full rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+                          <div key={i} className="relative w-full rounded-sm overflow-hidden border border-slate-100 shadow-sm">
                             <Image width={1200} height={1200} src={img} alt="Product description" className="w-full h-auto" />
                           </div>
                         ))
                       ) : (
-                        <div className="py-12 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-300">
+                        <div className="py-8 border-2 border-dashed border-slate-100 rounded-sm flex flex-col items-center justify-center text-slate-300">
                           <Package size={48} strokeWidth={1} />
                           <p className="text-sm font-medium mt-2">No additional images provided</p>
                         </div>
@@ -357,15 +357,21 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   </div>
                 </div>
 
-                <div className="p-8 border-t border-slate-100 sticky bottom-0 bg-white/80 backdrop-blur-md">
+                <div className="p-4 border-t border-slate-100 sticky bottom-0 bg-white/80 backdrop-blur-md flex gap-2">
                   <a
                     href={createWhatsappUrl(`আমি ${selectedProduct.name} অর্ডার করতে চাই।`)}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-16 rounded-2xl font-black text-xl shadow-xl shadow-emerald-900/20 transition-all flex items-center justify-center gap-3"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-14 rounded-sm font-black text-lg shadow-xl shadow-emerald-900/20 transition-all flex items-center justify-center gap-3"
                   >
                     <MessageCircle size={24} /> অর্ডার করতে ক্লিক করুন
                   </a>
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className="md:hidden h-14 w-14 shrink-0 bg-slate-900 hover:bg-slate-800 text-white rounded-sm font-black text-lg shadow-xl transition-all"
+                  >
+                    X
+                  </button>
                 </div>
               </div>
             </motion.div>
