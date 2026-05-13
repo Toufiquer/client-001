@@ -131,7 +131,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                         setActiveCategory(cat.id);
                         setIsMenuOpen(false);
                       }}
-                      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl text-xs font-bold transition-all border ${
+                      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-sm text-xs font-bold transition-all border ${
                         activeCategory === cat.id ? 'bg-white text-[#1B7E43] border-white' : 'bg-white/5 border-white/10 text-white'
                       }`}
                     >
@@ -168,7 +168,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 group flex flex-col h-full"
+                className="bg-white rounded-sm border border-slate-200 overflow-hidden hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-500 group flex flex-col h-full"
               >
                 <div className="relative aspect-square overflow-hidden bg-[#F1F5F2]">
                   <Image src={product.image} alt={product.name} fill className="object-contain p-8 group-hover:scale-110 transition-transform duration-700" />
@@ -245,13 +245,13 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   <div className="grid grid-cols-2 gap-3 mt-auto">
                     <button
                       onClick={() => setSelectedProduct(product)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white h-12 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all shadow-lg shadow-emerald-900/10 active:scale-95"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white h-12 rounded-sm flex items-center justify-center gap-2 text-sm font-bold transition-all shadow-lg shadow-emerald-900/10 active:scale-95"
                     >
                       <Eye size={18} /> বিস্তারিত
                     </button>
                     <button
                       onClick={() => setShareProduct(product)}
-                      className="border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-600 h-12 rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all active:scale-95"
+                      className="border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 text-slate-600 h-12 rounded-sm flex items-center justify-center gap-2 text-sm font-bold transition-all active:scale-95"
                     >
                       <Share2 size={18} /> শেয়ার
                     </button>
@@ -335,10 +335,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                       <span className="w-8 h-1 bg-emerald-600 rounded-sm" /> Product Details
                     </h4>
                     {selectedProduct.description && (
-                      <div
-                        className="prose prose-slate max-w-none text-slate-600"
-                        dangerouslySetInnerHTML={{ __html: selectedProduct.description }}
-                      />
+                      <div className="prose prose-slate max-w-none text-slate-600" dangerouslySetInnerHTML={{ __html: selectedProduct.description }} />
                     )}
                     <div className="space-y-4">
                       {selectedProduct.descriptionImages?.length > 0 ? (
@@ -393,7 +390,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl p-6 md:p-8"
+              className="relative w-full max-w-md bg-white rounded-sm overflow-hidden shadow-2xl p-6 md:p-8"
             >
               <button
                 onClick={() => setShareProduct(null)}
@@ -451,7 +448,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 </a>
               </div>
 
-              <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-2xl">
+              <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-sm">
                 <div className="flex-1 truncate px-3 text-sm text-slate-500 font-medium">
                   {typeof window !== 'undefined' ? window.location.href : 'https://example.com/product'}
                 </div>
@@ -463,7 +460,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                       setTimeout(() => setIsCopied(false), 2000);
                     }
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-900/10 active:scale-95 whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-sm text-sm font-bold transition-all shadow-md shadow-emerald-900/10 active:scale-95 whitespace-nowrap"
                 >
                   {isCopied ? (
                     <>
@@ -483,7 +480,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
 
       <footer className="mt-20 border-t border-slate-100 bg-white py-12">
         <div className="container mx-auto px-4">
-          <section className="bg-emerald-700 rounded-[3rem] p-8 md:p-20 overflow-hidden relative shadow-2xl">
+          <section className="bg-emerald-700 rounded-sm p-8 md:p-20 overflow-hidden relative shadow-2xl">
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-600/30 rounded-full blur-3xl" />
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-800/30 rounded-full blur-3xl" />
 
@@ -496,7 +493,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                     href={createWhatsappUrl('আমি পণ্য অর্ডার করতে চাই।')}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-10 py-5 bg-white text-emerald-900 rounded-2xl font-black text-xl hover:scale-105 transition-all shadow-2xl shadow-emerald-950/20 flex items-center gap-3"
+                    className="px-1 md:px-10 py-5 bg-white text-emerald-900 rounded-sm font-black text-sm w-full justify-center md:text-xl hover:scale-105 transition-all shadow-2xl shadow-emerald-950/20 flex items-center gap-3"
                   >
                     <MessageCircle size={24} /> অর্ডার করতে ক্লিক করুন
                   </a>
@@ -514,11 +511,11 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sectionData.footerFeatures.map((f, i) => {
                   const Icon = iconMap[f.iconName] || Zap;
                   return (
-                    <div key={i} className="bg-white/10 backdrop-blur-lg border border-white/10 p-8 rounded-3xl hover:bg-white/20 transition-all group">
+                    <div key={i} className="bg-white/10 backdrop-blur-lg border border-white/10 p-8 rounded-sm hover:bg-white/20 transition-all group">
                       <div className="text-emerald-300 mb-4 group-hover:scale-110 transition-transform">
                         <Icon size={40} />
                       </div>
