@@ -84,6 +84,10 @@ const QuerySection = ({ data }: ProductSectionProps) => {
   }, [activeCategory, sectionData.products]);
   const whatsappNumber = sectionData.whatsappNumber.replace(/\D/g, '') || defaultDataSection44.whatsappNumber;
   const createWhatsappUrl = (message: string) => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  const createProductShareUrl = (product: IProductItem) => {
+    const productPath = getProductDetailPath(product);
+    return typeof window !== 'undefined' ? `${window.location.origin}${productPath}` : productPath;
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAF9] font-sans selection:bg-green-100">
@@ -412,7 +416,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
 
               <div className="grid grid-cols-4 gap-4 mb-8">
                 <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(createProductShareUrl(shareProduct))}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-col items-center gap-2 group"
@@ -423,7 +427,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   <span className="text-[11px] font-bold text-slate-500 uppercase">Facebook</span>
                 </a>
                 <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(shareProduct.name)}`}
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(createProductShareUrl(shareProduct))}&text=${encodeURIComponent(shareProduct.name)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-col items-center gap-2 group"
@@ -434,7 +438,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   <span className="text-[11px] font-bold text-slate-500 uppercase">Twitter</span>
                 </a>
                 <a
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareProduct.name + ' - ' + (typeof window !== 'undefined' ? window.location.href : ''))}`}
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareProduct.name + ' - ' + createProductShareUrl(shareProduct))}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-col items-center gap-2 group"
@@ -445,7 +449,7 @@ const QuerySection = ({ data }: ProductSectionProps) => {
                   <span className="text-[11px] font-bold text-slate-500 uppercase">WhatsApp</span>
                 </a>
                 <a
-                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&title=${encodeURIComponent(shareProduct.name)}`}
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(createProductShareUrl(shareProduct))}&title=${encodeURIComponent(shareProduct.name)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-col items-center gap-2 group"
@@ -459,12 +463,12 @@ const QuerySection = ({ data }: ProductSectionProps) => {
 
               <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-sm">
                 <div className="flex-1 truncate px-3 text-sm text-slate-500 font-medium">
-                  {typeof window !== 'undefined' ? window.location.href : 'https://example.com/product'}
+                  {createProductShareUrl(shareProduct)}
                 </div>
                 <button
                   onClick={() => {
                     if (typeof window !== 'undefined') {
-                      navigator.clipboard.writeText(window.location.href);
+                      navigator.clipboard.writeText(createProductShareUrl(shareProduct));
                       setIsCopied(true);
                       setTimeout(() => setIsCopied(false), 2000);
                     }
